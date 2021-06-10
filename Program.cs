@@ -33,6 +33,13 @@ namespace NinetiesTV
             Print("Most Words in Title", WordieastName(shows));
             Print("All Names", AllNamesWithCommas(shows));
             Print("All Names with And", AllNamesWithCommasPlsAnd(shows));
+
+            // Challenges
+            Print("All Genres from the eighties", Alltheeightsgenres(shows));
+            Print("All Unique Genres", AllUniqueGenres(shows));
+            Print("Number of Shows started Per year", ShowsStartedPerYear(shows));
+            Print("Length to watch all shows", LengthtoWatchAll(shows));
+            Print("Highest average imdb", YearWithHighestIMDB(shows));
         }
 
         /**************************************************************************************************
@@ -65,7 +72,7 @@ namespace NinetiesTV
         static List<Show> ShowsWithAmpersand(List<Show> shows)
         {
             return shows.Where(s => s.Name.Contains("&") == true).Select(s => s).ToList();
-            
+
         }
 
         // 5. Return the most recent year that any of the shows aired.
@@ -85,7 +92,7 @@ namespace NinetiesTV
         {
             List<Show> answer = (
                 from s in shows
-                where s.StartYear>=1990 && s.EndYear <2000
+                where s.StartYear >= 1990 && s.EndYear < 2000
                 select s
             ).ToList();
             return answer;
@@ -114,7 +121,7 @@ namespace NinetiesTV
         {
             List<string> name = (
                 from s in shows
-                where s.EpisodeCount >100
+                where s.EpisodeCount > 100
                 select s.Name
             ).ToList();
             return name;
@@ -150,7 +157,7 @@ namespace NinetiesTV
             List<Show> multigenre = (
                 from s in shows
                 where s.Genres.Count > 1
-                orderby s.StartYear 
+                orderby s.StartYear
                 select s
             ).ToList();
             return multigenre;
@@ -167,8 +174,8 @@ namespace NinetiesTV
         //     show that ended on or after the year 2000.
         static Show EndedFirstAfterTheMillennium(List<Show> shows)
         {
-            int yearnear = shows.Where(s => s.EndYear >2000).Min(s => s.EndYear);
-            return shows.Where(s => s.EndYear >2000).OrderBy(s =>s.EndYear).FirstOrDefault(s => s.EndYear == yearnear);
+            int yearnear = shows.Where(s => s.EndYear > 2000).Min(s => s.EndYear);
+            return shows.Where(s => s.EndYear > 2000).OrderBy(s => s.EndYear).FirstOrDefault(s => s.EndYear == yearnear);
         }
 
         // 17. Order the shows by rating (highest first) 
@@ -205,7 +212,7 @@ namespace NinetiesTV
         //     with an IMDB rating of less than 8.0 ordered alphabetically.
         static Show FirstLongRunningTopRated(List<Show> shows)
         {
-            List<Show> running = shows.Where(s => (s.EndYear -s.StartYear) > 10 && s.ImdbRating < 8).OrderBy(s => s.Name).ToList();
+            List<Show> running = shows.Where(s => (s.EndYear - s.StartYear) > 10 && s.ImdbRating < 8).OrderBy(s => s.Name).ToList();
 
             return running[0];
         }
@@ -215,14 +222,14 @@ namespace NinetiesTV
         {
             int wordy = shows.Max(s => s.Name.Count(Char.IsWhiteSpace));
             return shows.FirstOrDefault(s => s.Name.Count(char.IsWhiteSpace) == wordy);
-            
+
         }
 
         // 22. Return the names of all shows as a single string seperated by a comma and a space.
         static string AllNamesWithCommas(List<Show> shows)
         {
-    
-            
+
+
             string names = String.Join(", ", shows.Select(s => s.Name).ToArray());
             return names;
         }
@@ -230,8 +237,8 @@ namespace NinetiesTV
         // 23. Do the same as above, but put the word "and" between the second-to-last and last show name.
         static string AllNamesWithCommasPlsAnd(List<Show> shows)
         {
-            string names = String.Join(", ", shows.Select(s => s.Name).Take(shows.Count -1).ToArray());
-            List<string> last = shows.Select(s => s.Name).Skip(shows.Count -1).ToList();
+            string names = String.Join(", ", shows.Select(s => s.Name).Take(shows.Count - 1).ToArray());
+            List<string> last = shows.Select(s => s.Name).Skip(shows.Count - 1).ToList();
             return names + ", and " + last[0];
         }
 
@@ -249,11 +256,32 @@ namespace NinetiesTV
         **************************************************************************************************/
 
         // 1. Return the genres of the shows that started in the 80s.
+        static List<string> Alltheeightsgenres(List<Show> shows)
+        {
+            return shows.Where(s => s.StartYear >=1980 && s.StartYear <1990).Select(s => string.Join(", " ,s.Genres.ToArray())).ToList();
+            
+        }
         // 2. Print a unique list of geners.
-        // 3. Print the years 1987 - 2018 along with the number of shows that started in each year (note many years will have zero shows)
-        // 4. Assume each episode of a comedy is 22 minutes long and each episode of a show that isn't a comedy is 42 minutes. How long would it take to watch every episode of each show?
-        // 5. Assume each show ran each year between its start and end years (which isn't true), which year had the highest average IMDB rating.
+        static List<string> AllUniqueGenres (List<Show> shows)
+        {
+            throw new NotImplementedException();
+        }
 
+        // 3. Print the years 1987 - 2018 along with the number of shows that started in each year (note many years will have zero shows)
+        static List<string> ShowsStartedPerYear (List<Show> shows)
+        {
+            throw new NotImplementedException();
+        }
+        // 4. Assume each episode of a comedy is 22 minutes long and each episode of a show that isn't a comedy is 42 minutes. How long would it take to watch every episode of each show?
+        static List<string> LengthtoWatchAll (List<Show> shows)
+        {
+            throw new NotImplementedException();
+        }
+        // 5. Assume each show ran each year between its start and end years (which isn't true), which year had the highest average IMDB rating.
+        static List<string> YearWithHighestIMDB (List<Show> shows)
+        {
+            throw new NotImplementedException();
+        } 
 
 
         /**************************************************************************************************
