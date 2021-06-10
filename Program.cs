@@ -36,10 +36,11 @@ namespace NinetiesTV
 
             // Challenges
             Print("All Genres from the eighties", Alltheeightsgenres(shows));
+            Print("Start years", ShowsStartedPerYear(shows));
+
             Print("All Unique Genres", AllUniqueGenres(shows));
-            Print("Number of Shows started Per year", ShowsStartedPerYear(shows));
-            Print("Length to watch all shows", LengthtoWatchAll(shows));
             Print("Highest average imdb", YearWithHighestIMDB(shows));
+            Print("Length to watch all shows", LengthtoWatchAll(shows));
         }
 
         /**************************************************************************************************
@@ -71,7 +72,7 @@ namespace NinetiesTV
         // 4. Return a list of shows whose title contains an & character.
         static List<Show> ShowsWithAmpersand(List<Show> shows)
         {
-            return shows.Where(s => s.Name.Contains("&") == true).Select(s => s).ToList();
+            return shows.Where(s => s.Name.Contains("&")).ToList();
 
         }
 
@@ -258,30 +259,90 @@ namespace NinetiesTV
         // 1. Return the genres of the shows that started in the 80s.
         static List<string> Alltheeightsgenres(List<Show> shows)
         {
-            return shows.Where(s => s.StartYear >=1980 && s.StartYear <1990).Select(s => string.Join(", " ,s.Genres.ToArray())).ToList();
-            
+            return shows.Where(s => s.StartYear >= 1980 && s.StartYear < 1990).Select(s => string.Join(", ", s.Genres.ToArray())).ToList();
+
         }
-        // 2. Print a unique list of geners.
-        static List<string> AllUniqueGenres (List<Show> shows)
+        // 2. Print a unique list of genres.
+        static List<string> AllUniqueGenres(List<Show> shows)
         {
-            throw new NotImplementedException();
+            var Genres = (
+               from s in shows
+               select s.Genres
+           );
+            List<string> genres = new List<string>();
+            foreach (var genre in Genres)
+            {
+                genres.AddRange(genre);
+            }
+            return genres.Distinct().ToList();
+
         }
 
         // 3. Print the years 1987 - 2018 along with the number of shows that started in each year (note many years will have zero shows)
-        static List<string> ShowsStartedPerYear (List<Show> shows)
+        static List<string> ShowsStartedPerYear(List<Show> shows)
         {
-            throw new NotImplementedException();
+            var yearstarted = (
+                from s in shows
+                group s by s.StartYear into newyear
+                orderby newyear.Key
+                select new { name = newyear.Key, count = newyear.Count() }
+            );
+            List<string> years = new List<string>();
+            for (int i = 1987; i < 2019; i++)
+            {
+                years.Add($"{i}: 0");
+                foreach (var newyear in yearstarted)
+                {
+
+                    if (i == newyear.name)
+                    {
+                        years[years.Count() - 1] = $"{i}: {newyear.count} ";
+                    }
+                }
+
+            }
+
+            return years;
         }
         // 4. Assume each episode of a comedy is 22 minutes long and each episode of a show that isn't a comedy is 42 minutes. How long would it take to watch every episode of each show?
-        static List<string> LengthtoWatchAll (List<Show> shows)
+        static int LengthtoWatchAll(List<Show> shows)
         {
-            throw new NotImplementedException();
+
+            var comedies = shows.Where(s => s.Genres.Contains("Comedy")).Select(s => s.EpisodeCount).Sum();
+            var others = shows.Select(s => s.EpisodeCount).Sum() - comedies;
+            return comedies*22+others*42;
         }
         // 5. Assume each show ran each year between its start and end years (which isn't true), which year had the highest average IMDB rating.
-        static List<string> YearWithHighestIMDB (List<Show> shows)
+        static int YearWithHighestIMDB(List<Show> shows)
         {
-            throw new NotImplementedException();
-        } 
+            Dictionary<int, double> yearlyavg = new Dictionary<int, double>();
+            for (int i = 1987; i < 2019; i++)
+            {
+                double yearavr;
+                var yearvalues = (
+                    from s in shows
+                    where i > s.StartYear && i < s.EndYear
+                    select s.ImdbRating
+                ).ToList();
+                if (yearvalues.Count() == 0)
+                {
+                    yearavr = 0;    
+                }
+                else
+                {
+                    yearavr = yearvalues.Average();
+                }
+                yearlyavg.Add(i, yearavr);
+            }
+
+            var sorted = (
+                from s in yearlyavg
+                orderby s.Value descending
+                select s.Key
+            ).ToList();
+ 
+            return sorted[0];
+        }
 
 
         /**************************************************************************************************
